@@ -21,7 +21,7 @@ function updateFeaturePointInStore(shapeId , pointid, position, newLabel){
     }
 
     if(newLabel){
-        featurePoints[index].label = newLabel    
+        featurePoints[index].label = newLabel
     }
 }
 function getShape(shapeId){
@@ -66,7 +66,9 @@ function updateShapeDetailInStore(shapeId, bbox, points){
 function attachShapeToImg(id, type, bbox, points){
     labellingData[ imgSelected.name ].shapes.push( {
         "id" : id,
-        "label" : "unlabelled",
+        "category": defaultCategory,
+        "corpus": null,
+        "label" : "",
         "type" : type,
         "points": points,
         "bbox" : bbox || {
@@ -80,7 +82,7 @@ function attachShapeToImg(id, type, bbox, points){
     } );
 }
 function addImgToStore(imgname, size) {
-    //If we already have this image data in localstorage, 
+    //If we already have this image data in localstorage,
     //don't initialize its properties
     if(!labellingData[imgname]){
         labellingData[imgname] = {

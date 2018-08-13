@@ -39,7 +39,7 @@ function readImageFile(f){
 function readPointsFile(input) {
     if (input.files && input.files[0]) {
         var pointFile = input.files[0];
-        
+
         var reader = new FileReader();
         reader.onload = function (e) {
             /* if(pointFile.name.endsWith(".pts")){

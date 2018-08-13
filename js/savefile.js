@@ -98,7 +98,7 @@ function saveAsDlibPts(){
 }
 
 /**
- * Save labelled data as COCO supported JSON file. 
+ * Save labelled data as COCO supported JSON file.
  * It captures only boundary box detail and categories.
  */
 function saveAsCOCO(){
@@ -110,7 +110,7 @@ function saveAsCOCO(){
 }
 
 /**
- * Save labelled data as Pascal VOC supported XML file. 
+ * Save labelled data as Pascal VOC supported XML file.
  * It captures only boundary box detail of currently loaded/selected image.
  */
 function saveAsPascalVOC(){
@@ -123,18 +123,18 @@ function saveAsPascalVOC(){
         return;
     }else{
         var data = pascalVocFormater.toPascalVOC();
-        askFileName(Object.keys(labellingData[ imgSelected.name ].shapes.length ).length + "_pvoc_imglab.xml", function(fileName){
-            analytics_reportExportType("pascal_voc");
-            download(data, fileName, "text/xml", "utf-8");
-        });
+        const extIdx = imgSelected.name.lastIndexOf('.');
+        const filename = imgSelected.name.slice(0, extIdx);
+
+        download(data, fileName, "text/xml", "utf-8");
     }
 
 }
 
 /**
  * Save given data to a file
- * @param {*} data 
- * @param {string} filename 
+ * @param {*} data
+ * @param {string} filename
  * @param {string} type : Mime type
  */
 function download(data, filename, type, encoding) {
@@ -145,8 +145,8 @@ function download(data, filename, type, encoding) {
 
 /**
  * Ask user to provide output filename
- * @param {string} suggestedName 
- * @param {function} cb 
+ * @param {string} suggestedName
+ * @param {function} cb
  */
 function askFileName(suggestedName, cb){
     suggestedName || (suggestedName = "Untitled_imgLab" )

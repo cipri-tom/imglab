@@ -18,18 +18,19 @@
         }
     </style>
 
-    <div each={tool,toolid in tools[opts.tools]} id={ toolid } class="tool-button" onclick={ selectme }>
+    <div each={tool,toolid in tools[opts.tools]} id={ toolid } onclick={ selectme }
+         class="tool-button {tool-selected: tool.default}">
         <img if={tool.icon} class="tool-icon" src="img/icons/{tool.icon}">
         <i if={tool.icon_font} class="tool-icon {tool.icon_font}" />
         <div>{ tool.title }</div>
     </div>
-    
+
     <script>
         //this.toolsData = tools[opts.tools];
         var tag = this;
         this.on('mount', function(){
             document.addEventListener('keydown', e => {
-                    
+
                 if (e.key == 'f'  && e.altKey){//featurepoint
                     $("#tool-point").click();
                     e.preventDefault();
@@ -95,7 +96,7 @@
             if(toolDetail.actions){
                 riot.mount('actionbar', { actions: toolDetail.actions});
             }
-            
+
         }
     </script>
 </toolbox>

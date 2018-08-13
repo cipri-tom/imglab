@@ -22,16 +22,19 @@ var pascalVocFormater = {
         <depth>3</depth>
     </size>
     <segmented>0</segmented>`
-        //Add images
+        // Add images
         var image = labellingData[ imgSelected.name ];
         for(var shape_i = 0 ; shape_i < image.shapes.length; shape_i++){
             var shape = image.shapes[ shape_i ];
             exportData += `
     <object>
-        <name>${shape.label}</name>
+        <name>${shape.category}</name>
+        <transcription>${shape.label}</transcription>
+        <corpus>${shape.corpus}</corpus>
         <pose>Unspecified</pose>
         <truncated>0</truncated>
         <difficult>0</difficult>
+        <occluded>0</occluded>
         <bndbox>
             <xmin>${shape.bbox.x}</xmin>
             <ymin>${shape.bbox.y}</ymin>

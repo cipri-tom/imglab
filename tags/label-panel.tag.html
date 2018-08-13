@@ -5,7 +5,7 @@
             border-radius: 6px;
             width: 100%;
             list-style: none;
-        }    
+        }
         .drag-handler{
             width : 20%;
             background-color: lightgray;
@@ -41,13 +41,26 @@
     <div class="d-flex flex-column" style="height: 100%;">
         <div ref="category-data" class="mb-2 mt-2">
             Category Name
-            <select id="category-select-box" class="form-text">
+            <select id="category-select-box" class="form-text" onchange={ updateCategory }>
                 <option each={category in suggestedCategories} selected={category === targetShape.category}>{category}</option>
             </select>
         </div>
+
+        <div ref="corpus-data" class="mb-2 mt-2">
+            Corpus
+            <select id="corpus-select-box" class="form-text" onchange={ updateCorpus }>
+                <option each={corpusID,corpusName in CORPUS_NAME_TO_CODE}
+                        value={corpusID}
+                        selected={corpusID === targetShape.corpus}>
+                    { corpusName }
+                    <!-- TODO: .replace('Corpus','') -->
+                </option>
+            </select>
+        </div>
+
         <div ref="label-data" class="mb-2 mt-2">
-            Label Name
-            <input type="text" class="form-text w-100" value="{ targetShape.label }" onchange={updateLabel} placeholder="Label the shape, Eg: face, clock ..">
+            Transcription
+            <input type="text" class="form-text w-100" value="{ targetShape.label }" onchange={updateLabel} placeholder="Enter the text in the field...">
         </div>
         <div ref="label-data" class="mb-2 mt-2">
             <attributes-list attributes={targetShape.attributes}></attributes-list>
@@ -82,6 +95,14 @@
             });
         }
 
+        updateCategory = function(e){
+            tag.targetShape.category = e.target.value;
+        }
+
+        updateCorpus = function(e){
+            tag.targetShape.corpus = e.target.value;
+        }
+
         tag.updateLabel = function(e){
             tag.targetShape.label = e.target.value;
         }
@@ -113,23 +134,6 @@
                 }
             });
 
-            $("#category-select-box")
-                .editableSelect()
-                .on('select.editable-select', function (e, li) {
-                    //console.log(li.val() ,",", li.text() );
-                    //Update Caegory
-                    tag.targetShape.category = li.text().toLowerCase();
-                });
-
-            $("#category-select-box").on('keyup', function(e){
-                //Add
-                var val = $(this).val().toLowerCase();
-                if(e.keyCode === 13 && suggestedCategories.indexOf( val  ) === -1 ){
-                    $("#category-select-box").editableSelect('add', val , 0);
-                    suggestedCategories.push(val );
-                }
-            });
-
             var tagInputBox = new Taggle('tags-input-box', {
                 tags: tag.targetShape.tags,
                 duplicateTagClass: 'bounce',
@@ -138,10 +142,10 @@
                     if(suggestedTags.indexOf(tagText) === -1){
                         suggestedTags.push(tagText);
                     }
-                }, 
+                },
                 onTagRemove : function(event, tagText){
                     tag.targetShape.tags.splice( tag.targetShape.tags.indexOf(tagText) ,1);
-                }, 
+                },
             });
 
             var tagInputBoxContainer = tagInputBox.getContainer();

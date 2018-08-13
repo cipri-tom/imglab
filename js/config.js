@@ -31,6 +31,7 @@ var tools = {
             }
         },
         "tool-rectangle" : {
+            default: true,
             type: "rect",
             title  : "Rectangle",
             desp : "Create a Boundary boxrectangle",
@@ -130,7 +131,17 @@ function getPointToDraw(position,container,canvasOffset){
 var imgSelected = "";
 var selectedElements = [];
 var copiedElements;
-var selectedTool = null, selectedElement = null;
+
+var selectedTool = null;
+for (let key in tools["labelling"]) {
+    tool = tools['labelling'][key]
+    if (tool['default'] === true) {
+        selectedTool = tool;
+        break;
+    }
+}
+
+var selectedTool = tools['labelling']['tool-rectangle'], selectedElement = null;
 var alreadyDrawing = false;
 
 var plugins = {
@@ -144,7 +155,22 @@ var pluginsStore = {
     }
 }
 
-var suggestedCategories = ["dog", "cat", "car", "vehicle", "truck", "animal", "building", "person"];
+var suggestedCategories = ["HW", "Printed", "Space"];
+var defaultCategory = suggestedCategories[0];
+
+CORPUS_NAME_TO_CODE = {
+    'VocabCorpus': 0,
+    'NameCorpus': 1,
+    'PhoneCorpus': 2,
+    'DateCorpus': 3,
+    'HourCorpus': 4,
+    'AddressCorpus': 5,
+    'LicensePlateCorpus': 6,
+    'NumberCorpus': 7,
+    'CarModelCorpus': 8,
+    'InsuranceNameCorpus': 9,
+}
+
 var suggestedTags = [];
 var suggestedAttributes = {
     "gender" : ["male", "female", "other"],

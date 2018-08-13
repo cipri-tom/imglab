@@ -19,18 +19,19 @@
 	<meta name="msapplication-TileColor" content="#ffffff">
 	<meta name="msapplication-TileImage" content="img/favicons/ms-icon-144x144.png">
 	<meta name="theme-color" content="#ffffff">
-		
+
 	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-119603824-1"></script>
+	<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119603824-1"></script> -->
 	<script>
 		window.dataLayer = window.dataLayer || [];
+		function gtag() {}
 
-		function gtag() {
-			dataLayer.push(arguments);
-		}
-		gtag('js', new Date());
+		// function gtag() {
+		// 	dataLayer.push(arguments);
+		// }
+		// gtag('js', new Date());
 
-		gtag('config', 'UA-119603824-1');
+		// gtag('config', 'UA-119603824-1');
 	</script>
 
 	<title>ImgLab - Image Annotation tool</title>
@@ -82,7 +83,7 @@
 			<div class="col-3 col-sm-4 col-md-4 col-xl-4">
 				<div class="form-inline flex-row-reverse float-right">
 					<a class="btn btn-info" onclick="javascript:displayDonationPrompt()" style="margin: 0px 10px;">Donate</a>
-					<shortcuts class="d-none d-md-block"></shortcuts> 
+					<shortcuts class="d-none d-md-block"></shortcuts>
 					<plugins-menu  class="d-none d-md-block"></plugins-menu>
 				</div>
 			</div>
