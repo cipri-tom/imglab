@@ -97,6 +97,7 @@ function addImgToStore(imgname, size) {
             "shapes": []
         }
     }
+    return labellingData[imgname];
 }
 
 var labellingData = {};

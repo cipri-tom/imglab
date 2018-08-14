@@ -104,12 +104,12 @@ var tools = {
             icon : "move.svg",
             type : "move",
         },
-        /* "tool-zoom" : {
+        "tool-zoom" : {
             title  : "Zoom In",
             desp : "Enlarge the workarea",
             icon_font : "icon-zoom-in",
             actions : ["zoom"]
-        }, */
+        },
         "tool-light" : {
             title  : "Light",
             desp : "Highlight the labels",
@@ -159,6 +159,7 @@ var suggestedCategories = ["HW", "Printed", "Space"];
 var defaultCategory = suggestedCategories[0];
 
 CORPUS_NAME_TO_CODE = {
+    'Unspecified': undefined,
     'VocabCorpus': 0,
     'NameCorpus': 1,
     'PhoneCorpus': 2,

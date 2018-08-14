@@ -22,7 +22,7 @@ function readDataFile(e){
     var input = e.srcElement;
     if (input.files && input.files[0]) {
         var dataFile = input.files[0];
-        
+
         var reader = new FileReader();
         reader.onload = function (e) {
             /* if(pointFile.name.endsWith(".pts")){
@@ -34,13 +34,13 @@ function readDataFile(e){
             }else if(dataFile.name.endsWith(".fpp")){
                 loadFpp(e.target.result);
             }else if(dataFile.name.endsWith(".xml")){
-                loadDlibXml(e.target.result);
+                loadPascalXML(e.target.result);
             }else{
                 console.log("Not supported");
             }
         };
 
-        reader.readAsText(input.files[0]);
+        reader.readAsText(input.files[0], 'ISO-8859-1');
     }
     input.value = null;
 }
@@ -87,9 +87,9 @@ var loadDlibXml = function(data){
                         /* pose='4' detection_score='4' */
                     },
                     points : [
-                        currentBox.left, 
-                        currentBox.top, 
-                        currentBox.width, 
+                        currentBox.left,
+                        currentBox.top,
+                        currentBox.width,
                         currentBox.height
                     ],
                     attributes : [],
@@ -121,3 +121,30 @@ var loadDlibXml = function(data){
 
 }
 
+function loadPascalXML(data) {
+    annot = JXON.stringToJs(data).annotation;
+    imgData = addImgToStore(annot.filename, annot.size);
+    for (let [idx, obj] of annot.object.entries()) {
+        const x = obj.bndbox.xmin,
+              y = obj.bndbox.ymin,
+              w = obj.bndbox.xmax - obj.bndbox.xmin,
+              h = obj.bndbox.ymax - obj.bndbox.ymin;
+        const bbox = [x, y, w, h];
+
+        // copied from `attachShapeToImg`; TODO: use the same function without global state
+        imgData.shapes.push( {
+            "id" : `loaded-shape-${idx}`,
+            "category": obj.name,
+            "corpus": obj.corpus,
+            "label" : obj.transcription,
+            "type" : 'rect',
+            "points": bbox,
+            "bbox" : bbox,
+            "attributes": [],
+            "tags": [],
+            "featurePoints": [],
+        } );
+    }
+
+    debugger;;
+}
