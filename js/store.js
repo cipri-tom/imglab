@@ -81,7 +81,7 @@ function attachShapeToImg(id, type, bbox, points){
         "featurePoints": []
     } );
 }
-function addImgToStore(imgname, size) {
+function initImgInStore(imgname, size) {
     //If we already have this image data in localstorage,
     //don't initialize its properties
     if(!labellingData[imgname]){
@@ -96,8 +96,9 @@ function addImgToStore(imgname, size) {
             },
             "shapes": []
         }
+        return labellingData[imgname];
     }
-    return labellingData[imgname];
+    return null;
 }
 
 var labellingData = {};

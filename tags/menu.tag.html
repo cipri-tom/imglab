@@ -17,20 +17,21 @@
         </div>
     </div>
     <script>
-        this.openFile = function(e){
-            readDataFile(e);
-            //openDataFile()
+        openFile(e) {
+            var input = e.target;
+            if (e.target.files.length > 0)
+                readDataFile(e.target.files[0]);
         }
 
-        this.saveFile = function(){
+        saveFile(e) {
             selectFileTypeToSave();
         }
 
-        this.openSettings = function(){
+        openSettings(e) {
             displaySettingsModal();
         }
 
-        //Mapping Keyboard keys 
+        //Mapping Keyboard keys
         this.on('mount', function(){
 
             document.addEventListener('keydown', e => {//import
@@ -44,7 +45,7 @@
                     e.preventDefault();
                     e.stopPropagation();
                 }
-                
+
             })
         });
     </script>

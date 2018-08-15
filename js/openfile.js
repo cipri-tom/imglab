@@ -1,48 +1,23 @@
-function openDataFile(){
-    $.dialog({
-        title: 'Open/Import',
-        content: `<p>Due to the security reasons, browser doesn't allow to load the images.
-        So please load the images manually.</p>
-        <div style="text-align:center;">
-            <label class="btn btn-primary btn-bs-file">Browse
-                <input id="browse" type="file" class="filebutton" accept=".fpp,.nimn,.xml,.json"   />
-            </label>
-        <div>`,
-        escapeKey: true,
-        backgroundDismiss: true,
-        onContentReady: function(){
-            $("#browse").bind("change", function(input) {
-                readDataFile(input);
-           });
-        }
-    });
-}
-
-function readDataFile(e){
-    var input = e.srcElement;
-    if (input.files && input.files[0]) {
-        var dataFile = input.files[0];
-
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            /* if(pointFile.name.endsWith(".pts")){
-                loadPts(e.target.result);
-            }else if(dataFile.name.endsWith(".json")){
-                loadJSONFile(e.target.result);
-            }else*/ if(dataFile.name.endsWith(".nimn")){
-                loadProjectFile(e.target.result);
-            }else if(dataFile.name.endsWith(".fpp")){
-                loadFpp(e.target.result);
-            }else if(dataFile.name.endsWith(".xml")){
-                loadPascalXML(e.target.result);
-            }else{
-                console.log("Not supported");
-            }
-        };
-
-        reader.readAsText(input.files[0], 'ISO-8859-1');
+function readDataFile(dataFile){
+    let readFn;
+    /* if(dataFile.name.endsWith(".json")){
+        readFn = loadJSONFile;
+    } else*/ if(dataFile.name.endsWith(".nimn")){
+        readFn = loadProjectFile;
+    } else if(dataFile.name.endsWith(".fpp")){
+        readFn = loadFpp;
+    } else if(dataFile.name.endsWith(".xml")){
+        readFn = loadPascalXML;
+    } else {
+        console.log(`Ignoring file ${dataFile.name}`);
+        return;
     }
-    input.value = null;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        readFn(e.target.result);
+    };
+    reader.readAsText(dataFile, 'ISO-8859-1');
 }
 
 var loadProjectFile = function(data){
@@ -123,7 +98,11 @@ var loadDlibXml = function(data){
 
 function loadPascalXML(data) {
     annot = JXON.stringToJs(data).annotation;
-    imgData = addImgToStore(annot.filename, annot.size);
+    imgData = initImgInStore(annot.filename, annot.size);
+    if (imgData === null) {
+        console.log(`Image already initialised: ${annot.filename}`);
+        return;
+    }
     for (let [idx, obj] of annot.object.entries()) {
         const x = obj.bndbox.xmin,
               y = obj.bndbox.ymin,

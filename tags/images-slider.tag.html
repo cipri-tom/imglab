@@ -7,63 +7,48 @@
         <div style="width: 50px;  text-align: center; padding: 10px;">
                 <label class="btn-bs-file">
                     <i class="icon-picture" style="font-size: 1.5em"></i>
-                    <input id="browseImages" type="file" class="filebutton" accept="image/*"  onchange= { readImageFiles }  multiple/>
+                    <input id="browseImages" type="file" class="filebutton" accept="image/*"  onchange= { readFiles }  multiple/>
                 </label>
 
                 <label class="btn-bs-file">
                     <i class="icon-folder-open-empty" style="font-size: 1.5em"></i>
-                    <input type="file" id="image_folder" webkitdirectory mozdirectory msdirectory odirectory directory onchange={ readImageFiles } >
+                    <input type="file" id="image_folder" webkitdirectory mozdirectory msdirectory odirectory directory onchange={ readFiles } >
                 </label>
         </div>
-        <div id="leftpaddle" class="align-middle"  style="height: 100%;">
+        <div id="leftpaddle" class="align-middle" onclick={ slideleft }  style="height: 100%;">
             <span style="width: 50px; height: 90px;">
                 <i class="icon-left-open" style="font-size: 1.5em"></i>
             </span>
         </div>
         <div class="photolist-wrapper " style="width: calc(100% - 160px); height: 90px;">
-            <div id="photolist" class="photolist">
-                    <!-- <span each={ thumbnails } class="d-inline-block">
+            <div id="photolist" ref="photolist" class="photolist">
+                    <!-- <span each={ images } class="d-inline-block">
                         <span class="delete" onclick={ deleteThumbnail }></span> -->
-                        <img id="thumbnail_{index}" each={ thumbnail,index in thumbnails } src={ thumbnail.src } label ={ thumbnail.name } title={ thumbnail.name } width={thumbnailWidth} onclick={ loadIntoWorkArea}>
+                        <img id="thumbnail_{index}" each={ image,index in images } src={ image.src } label ={ image.name } title={ image.name } width={thumbnailWidth} onclick={ loadIntoWorkArea}>
                     <!-- </span> -->
             </div>
         </div>
-        <div id="rightpaddle" class="align-middle"  style="height: 100%;">
+        <div id="rightpaddle" class="align-middle" onclick={ slideright } style="height: 100%;">
             <span style="width: 50px; height: 90px;">
                 <i class="icon-right-open" style="font-size: 1.5em"></i>
             </span>
         </div>
-    
-    
+
+
     <script>
         var tag = this;
-        tag.readImageFiles = readImageFiles;
-        tag.readImageFile = readImageFile;
-        tag.slideleft = slideleft;
-        tag.slideright = slideright;
-        tag.deleteThumbnail = deleteThumbnail;
-        tag.loadIntoWorkArea = loadIntoWorkArea;
 
         this.on('mount', function(){
-                
-                $("#leftpaddle").click(function(e){
-                    tag.slideleft(e);
-                })
-
-                $("#rightpaddle").click(function(e){
-                    tag.slideright(e);
-                })
-
                 //Map keyboard keys
                 document.addEventListener('keydown', e => {
-                    
+
                     if (e.key == 'ArrowLeft'  && e.altKey){
                         if(tag.currentIndex > 0 ) $("#thumbnail_" + --tag.currentIndex).click();
                         e.preventDefault();
                         e.stopPropagation();
                     }
                     if (e.key == 'ArrowRight'  && e.altKey){
-                        if(tag.currentIndex < tag.thumbnails.length - 1 ) $("#thumbnail_"+ ++tag.currentIndex).click();
+                        if(tag.currentIndex < tag.images.length - 1 ) $("#thumbnail_"+ ++tag.currentIndex).click();
                         e.preventDefault();
                         e.stopPropagation();
                     }
@@ -85,89 +70,76 @@
             //$("#thumbnail_0").click(); as this triggers before images are uploaded it cuase issue. Load it with an interval
         })
 
-        function readImageFiles(e) {
-            var input = e.srcElement || e.target;
-            if (input.files && input.files[0]) {
-                for(i=0;i<input.files.length;i++){
-                    this.readImageFile(input.files[i]);
-                }
-            }
-        }
-
-        tag.thumbnails = [];
-        tag.currentIndex = 0;
+        this.images = [];
+        this.currentIndex = 0;
         this.thumbnailWidth= this.opts.thumbnail_width || "80px";
 
-        function readImageFile(f) {
-            if(f.type.startsWith("image")){
-                var reader = new FileReader();
-                reader.onload = e => {
-                    var imgData = {
-                        name : f.name,
-                        src: e.target.result
-                    };
-                    updateDimentions(e.target.result, imgData);
-                    tag.thumbnails.push(imgData);
-                    
-                    this.trigger("uploadimages");
-                }
-                reader.onloadend = e => {
-                    this.update();
-                }
-                reader.readAsDataURL(f);
+        readFiles(e) {
+            for(let f of e.target.files) {
+                if (f.type.startsWith('image'))
+                    this.readSingleImage(f);
+                else
+                    readDataFile(f);
             }
         }
 
-        function updateDimentions(imgFileSrc, imageDataObject) {
-            var img = new Image();
-            img.onload = function() {
-                imageDataObject.size = {
-                    width : this.width,
-                    height : this.height
+        readSingleImage(file) {
+            var reader = new FileReader();
+            reader.onload = readerEvent => {
+                const img = new Image();
+                img.src = reader.result;
+                img.name = file.name
+                img.onload = function(imageEvent) {  // regular function to have `this` = the image object
+                    this.size = {width: this.width, height: this.height}
+                    initImgInStore(this.name, this.size);
                 }
-                addImgToStore(imageDataObject.name, imageDataObject.size);
+
+                this.images.push(img);
             }
-            img.src = imgFileSrc;
+            reader.onloadend = e => {
+                this.update();
+            }
+            reader.readAsDataURL(file);
         }
 
         this.sliding = false;
         this.sliderMove = "80px";
-        function slideleft(e) {
+        slideleft(e) {
             var photolist = $("#photolist");
             if (this.sliding === false) {
                 this.sliding = true;
-                photolist.css({ left: "-"+this.sliderMove })
-                    .prepend(photolist.children('img:last-child'))
+                this.refs.photolist.css({ left: "-"+this.sliderMove })
+                    .prepend(this.refs.photolist.children('img:last-child'))
                     .animate({ left: 0 }, 200, 'linear', () => {
                         this.sliding = false;
                     });
             }
         };
-        function slideright(e) {
-            var photolist = $("#photolist");
+
+        slideright(e) {
             if (this.sliding === false) {
                 this.sliding = true;
-                photolist.animate({ left: "-"+this.sliderMove }, 200, 'linear', () => {
-                    photolist.css({ left: 0 })
-                        .append(photolist.children('img:first-child'));
+                this.refs.photolist.animate({ left: "-"+this.sliderMove }, 200, 'linear', () => {
+                    this.refs.photolist.css({ left: 0 })
+                        .append(this.refs.photolist.children('img:first-child'));
                     this.sliding = false;
                 });
             }
         };
 
-        function deleteThumbnail(e){
+        deleteThumbnail(e){
             var thumbnail = $(e.target.nextElementSibling);
-            for(var thumbnail_i in tag.thumbnails){
-                if(tag.thumbnails[thumbnail_i].name === $(thumbnail[0]).attr("title")){
-                    tag.thumbnails.splice(thumbnail_i,1);
+            for(var thumbnail_i in tag.images){
+                if(tag.images[thumbnail_i].name === $(thumbnail[0]).attr("title")){
+                    tag.images.splice(thumbnail_i,1);
                     break;
                 }
             }
             this.update();
         }
 
-        function loadIntoWorkArea(e){
-            imgSelected = tag.thumbnails[e.item.index];
+        loadIntoWorkArea(e){
+            imgSelected = tag.images[e.item.index];
             riot.mount("workarea",{ img : imgSelected });
         }
     </script>
