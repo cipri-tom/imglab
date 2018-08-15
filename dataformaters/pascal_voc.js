@@ -47,5 +47,4 @@ var pascalVocFormater = {
 
         return exportData;
     }
-
 }

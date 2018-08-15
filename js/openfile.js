@@ -145,6 +145,4 @@ function loadPascalXML(data) {
             "featurePoints": [],
         } );
     }
-
-    debugger;;
 }

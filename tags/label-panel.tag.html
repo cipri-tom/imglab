@@ -85,39 +85,38 @@
         </div>
     </div>
     <script>
-        var tag = this;
-        tag.targetShape = getShape(this.opts.id) ;
-        tag.tags = tag.targetShape.tags.join(", ");
+        this.targetShape = getShape(this.opts.id) ;
+        this.tags = this.targetShape.tags.join(", ");
 
-        tag.updateTags = function(e){
-            tag.targetShape.tags = e.target.value.split(",").map(function(item) {
+        updateTags(e) {
+            this.targetShape.tags = e.target.value.split(",").map(function(item) {
                 return item.trim();
             });
         }
 
-        updateCategory = function(e){
-            tag.targetShape.category = e.target.value;
+        updateCategory(e) {
+            this.targetShape.category = e.target.value;
         }
 
-        updateCorpus = function(e){
-            tag.targetShape.corpus = Number.parseInt(e.target.value);
+        updateCorpus(e) {
+            this.targetShape.corpus = Number.parseInt(e.target.value);
         }
 
-        tag.updateLabel = function(e){
-            tag.targetShape.label = e.target.value;
+        updateLabel(e) {
+            this.targetShape.label = e.target.value;
         }
 
-        tag.deleteTag = function(e){
+        deleteTag(e) {
             detachPointByIndex(opts.id, e.item.fid);
             this.update();
             riot.mount('workarea',{ img : imgSelected});
         }
 
-        tag.updateFPointLabel = function(e){
-            tag.targetShape.featurePoints[e.item.fid].label = e.target.value;
+        updateFPointLabel(e) {
+            this.targetShape.featurePoints[e.item.fid].label = e.target.value;
         }
 
-        tag.on('mount',function(){
+        this.on('mount',function(){
             $( "#fpoints-list" ).sortable({
                 axis: "y",
                 placeholder: 'sortable-placeholder',
@@ -129,22 +128,22 @@
                 update : function(event,ui){
                     var newIndex = ui.item.index();
                     var oldIndex = ui.item[0]._tag.fid;
-                    array_move(tag.targetShape.featurePoints,oldIndex,newIndex);
-                    tag.update();
+                    array_move(this.targetShape.featurePoints,oldIndex,newIndex);
+                    this.update();
                 }
             });
 
             var tagInputBox = new Taggle('tags-input-box', {
-                tags: tag.targetShape.tags,
+                tags: this.targetShape.tags,
                 duplicateTagClass: 'bounce',
                 onTagAdd : function(event, tagText){
-                    tag.targetShape.tags.push(tagText);
+                    this.targetShape.tags.push(tagText);
                     if(suggestedTags.indexOf(tagText) === -1){
                         suggestedTags.push(tagText);
                     }
                 },
                 onTagRemove : function(event, tagText){
-                    tag.targetShape.tags.splice( tag.targetShape.tags.indexOf(tagText) ,1);
+                    this.targetShape.tags.splice( this.targetShape.tags.indexOf(tagText) ,1);
                 },
             });
 
