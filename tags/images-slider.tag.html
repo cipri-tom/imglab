@@ -24,7 +24,11 @@
             <div id="photolist" ref="photolist" class="photolist">
                     <!-- <span each={ images } class="d-inline-block">
                         <span class="delete" onclick={ deleteThumbnail }></span> -->
-                        <img id="thumbnail_{index}" each={ image,index in images } src={ image.src } label ={ image.name } title={ image.name } width={thumbnailWidth} onclick={ loadIntoWorkArea}>
+                        <img each={ image,index in images }
+                            src={ image.src } onclick={ loadIntoWorkArea }
+                            id="thumbnail_{index}"  class={currentImg: image === imgSelected} width={thumbnailWidth}
+                            label={ image.name } title={ image.name }
+                        >
                     <!-- </span> -->
             </div>
         </div>
@@ -39,6 +43,7 @@
         var tag = this;
 
         this.on('mount', function(){
+            this.photolist = $(this.refs.photolist);
                 //Map keyboard keys
                 document.addEventListener('keydown', e => {
 
@@ -105,23 +110,22 @@
         this.sliding = false;
         this.sliderMove = "80px";
         slideleft(e) {
-            var photolist = $("#photolist");
             if (this.sliding === false) {
                 this.sliding = true;
-                this.refs.photolist.css({ left: "-"+this.sliderMove })
-                    .prepend(this.refs.photolist.children('img:last-child'))
-                    .animate({ left: 0 }, 200, 'linear', () => {
-                        this.sliding = false;
-                    });
+                this.photolist.css({ left: "-"+this.sliderMove })
+                              .prepend(this.photolist.children('img:last-child'))
+                              .animate({ left: 0 }, 200, 'linear', () => {
+                                  this.sliding = false;
+                              });
             }
         };
 
         slideright(e) {
             if (this.sliding === false) {
                 this.sliding = true;
-                this.refs.photolist.animate({ left: "-"+this.sliderMove }, 200, 'linear', () => {
-                    this.refs.photolist.css({ left: 0 })
-                        .append(this.refs.photolist.children('img:first-child'));
+                this.photolist.animate({ left: "-"+this.sliderMove }, 200, 'linear', () => {
+                    this.photolist.css({ left: 0 })
+                        .append(this.photolist.children('img:first-child'));
                     this.sliding = false;
                 });
             }
@@ -139,7 +143,7 @@
         }
 
         loadIntoWorkArea(e){
-            imgSelected = tag.images[e.item.index];
+            imgSelected = this.images[e.item.index];
             riot.mount("workarea",{ img : imgSelected });
         }
     </script>

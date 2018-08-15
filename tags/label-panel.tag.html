@@ -52,8 +52,7 @@
                 <option each={corpusID,corpusName in CORPUS_NAME_TO_CODE}
                         value={corpusID}
                         selected={corpusID === targetShape.corpus}>
-                    { corpusName }
-                    <!-- TODO: .replace('Corpus','') -->
+                    { corpusName.replace('Corpus', '') }
                 </option>
             </select>
         </div>

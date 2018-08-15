@@ -46,6 +46,10 @@
     opacity: 0.3;
     transition: .5s ease;
 }
+
+.photolist-wrapper .photolist  img.currentImg {
+    opacity: 1;
+}
 .photolist-wrapper .photolist  img:hover {
     opacity: 1.0;
     transition: .5s ease;
